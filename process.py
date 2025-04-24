@@ -3,5 +3,5 @@ import numpy as np
 
 
 def pandas_to_numpy(df):
-    df = pandas.DataFrame(df)
+    df = pd.DataFrame(df)
     return df.to_numpy()
