@@ -23,5 +23,5 @@ def process(path):
 
     return input_train, input_test, true_train, true_test
 
-if __name__ == "__main__"
+if __name__ == "__main__":
     process(PATH)
