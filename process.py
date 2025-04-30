@@ -20,9 +20,9 @@ def process(path):
     df.isnull().sum()
     df.value_counts()
     true = df["diagnosis"].to_numpy()
-    input = df.drop(["diagnosis"], axis=1)
-    input = df.filter(['area_worst', 'perimeter_worst', 'smoothness_worst', 'concave points_worst', 'fractal_dimension_worst', 'radius_worst'])
-    input_normalized = (input - np.min(input)) / (np.max(input) - np.min(input))
+    input_df = df.drop(["diagnosis"], axis=1)
+    input_df = input_df.filter(['symmetry_mean', 'texture_mean', 'smoothness_mean', 'concave points_mean', 'fractal_dimension_mean', 'radius_mean'])
+    input_normalized = (input_df - np.min(input_df)) / (np.max(input_df) - np.min(input_df))
     input_normalized = input_normalized.to_numpy()
     input_train, input_test, true_train, true_test = train_test_split(input_normalized, true, test_size=0.2, random_state=42)
 
