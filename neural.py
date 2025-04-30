@@ -1,17 +1,9 @@
 import torch
-from torcheval.metrics import BinaryPrecision, BinaryF1Score, BinaryAccuracy, BinaryConfusionMatrix, BinaryRecall
+from torcheval.metrics.functional import binary_precision, binary_f1_score, binary_accuracy, binary_confusion_matrix, binary_recall
 import torch.nn as nn
 from process import process
 
 PATH = "./Cancer_Data.csv"
-
-class MLP(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super(MLP, self).__init__()
-        self.layer1 = nn.Linear(input_size, hidden_size)
-        self.activation1 = nn.ReLU()
-        self.layer2 = nn.Linear(hidden_size, output_size)
-        self.activation2 = nn.Softmax(dim=1)
 
 
 def model_first(dataset):
@@ -33,13 +25,34 @@ def model_first(dataset):
         loss.backward()
         optimizer.step()
 
+    y_pred_train = model(torch.from_numpy(dataset['x_train']).double())
+    confusion_train = binary_confusion_matrix(torch.squeeze(y_pred_train), torch.from_numpy(dataset['y_train']))
+    accuracy_train = binary_accuracy(torch.squeeze(y_pred_train), torch.from_numpy(dataset['y_train']))
+    precision_train = binary_precision(torch.squeeze(y_pred_train), torch.from_numpy(dataset['y_train']))
+    recall_train = binary_recall(torch.squeeze(y_pred_train), torch.from_numpy(dataset['y_train']))
+    f1_score_train = binary_f1_score(torch.squeeze(y_pred_train), torch.from_numpy(dataset['y_train']))
+
+    print(f"Training Confusion Matrix: {confusion_train}")
+    print(f"Training Accuracy: {accuracy_train}")
+    print(f"Training Precision: {precision_train}")
+    print(f"Training Recall: {recall_train}")
+    print(f"Training F1-Score: {f1_score_train}")
+
     model.eval()
     y_pred = model(torch.from_numpy(dataset['x_test']))
-    for y_hat, y in zip(y_pred, dataset['y_test']):
-        print(y_hat)
-        print(y)
-
     model.train()
+
+    confusion_test = binary_confusion_matrix(torch.squeeze(y_pred), torch.from_numpy(dataset['y_test']))
+    accuracy_test = binary_accuracy(torch.squeeze(y_pred), torch.from_numpy(dataset['y_test']))
+    precision_test = binary_precision(torch.squeeze(y_pred), torch.from_numpy(dataset['y_test']))
+    recall_test = binary_recall(torch.squeeze(y_pred), torch.from_numpy(dataset['y_test']))
+    f1_score_test = binary_f1_score(torch.squeeze(y_pred), torch.from_numpy(dataset['y_test']))
+
+    print(f"Testing Confusion Matrix: {confusion_test}")
+    print(f"Testing Accuracy: {accuracy_test}")
+    print(f"Testing Precision: {precision_test}")
+    print(f"Testing Recall: {recall_test}")
+    print(f"Testing F1-Score: {f1_score_test}")
 
 
 if __name__ == '__main__':
