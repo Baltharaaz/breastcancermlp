@@ -1,4 +1,5 @@
 import torch
+from torcheval.metrics import BinaryPrecision, BinaryF1Score, BinaryAccuracy, BinaryConfusionMatrix, BinaryRecall
 import torch.nn as nn
 from process import process
 
@@ -22,20 +23,23 @@ def model_first(dataset):
     )
     loss_function = nn.BCELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    num_epochs = 100
+    num_epochs = 10000
 
-
-
+    model.train()
     for epoch in range(num_epochs):
-        y_pred = model(torch.from_numpy(dataset['x_train']))
-        loss = loss_function(y_pred, torch.from_numpy(dataset['y_train']))
+        y_pred = model(torch.from_numpy(dataset['x_train']).double())
+        loss = loss_function(y_pred, torch.from_numpy(dataset['y_train']).unsqueeze(1).double())
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
+    model.eval()
     y_pred = model(torch.from_numpy(dataset['x_test']))
     for y_hat, y in zip(y_pred, dataset['y_test']):
-        print(y_hat + " " + y)
+        print(y_hat)
+        print(y)
+
+    model.train()
 
 
 if __name__ == '__main__':

@@ -21,7 +21,7 @@ def process(path):
     df.value_counts()
     true = df["diagnosis"].to_numpy()
     input = df.drop(["diagnosis"], axis=1)
-    input = df.filter([])
+    input = df.filter(['area_worst', 'perimeter_worst', 'smoothness_worst', 'concave points_worst', 'fractal_dimension_worst', 'radius_worst'])
     input_normalized = (input - np.min(input)) / (np.max(input) - np.min(input))
     input_normalized = input_normalized.to_numpy()
     input_train, input_test, true_train, true_test = train_test_split(input_normalized, true, test_size=0.2, random_state=42)
