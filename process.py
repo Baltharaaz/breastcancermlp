@@ -22,7 +22,8 @@ def process(path):
     print("\nCheck for null values:")
     print(df.isnull().sum())
     
-    # check and remove NaN values
+    # check and drop NaN values
+    print("\nCheck for NaN values:")
     print(df.isna().sum())
     df = df.dropna(axis=1, how='all') # Dropping column #32 that is a column of NaNs
 
@@ -38,8 +39,9 @@ def process(path):
     print(true[:5])
     
     # select variables from dataset
+    features = ['symmetry_mean', 'texture_mean', 'smoothness_mean', 'concave points_mean', 'fractal_dimension_mean', 'radius_mean']
     input = df.drop(["diagnosis"], axis=1)
-    input = df.filter(['symmetry_mean', 'texture_mean', 'smoothness_mean', 'concave points_mean', 'fractal_dimension_mean', 'radius_mean'])
+    input = df.filter(features)
     print("\nHead of input array:")
     print(input.head())
     
