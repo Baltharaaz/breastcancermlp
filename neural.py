@@ -2,15 +2,16 @@ import torch
 from torcheval.metrics.functional import binary_precision, binary_f1_score, binary_accuracy, binary_confusion_matrix, binary_recall
 import torch.nn as nn
 from process import process
+import matplotlib.pyplot as plt
 
 PATH = "./Cancer_Data.csv"
 
 
 def model_first(dataset):
     model = nn.Sequential(
-        nn.Linear(6, 10, dtype=torch.double),
+        nn.Linear(7, 25, dtype=torch.double),
         nn.ReLU(),
-        nn.Linear(10, 1, dtype=torch.double),
+        nn.Linear(25, 1, dtype=torch.double),
         nn.Sigmoid()
     )
     loss_function = nn.BCELoss()
@@ -18,12 +19,22 @@ def model_first(dataset):
     num_epochs = 10000
 
     model.train()
+    training_losses = []
     for epoch in range(num_epochs):
         y_pred = model(torch.from_numpy(dataset['x_train']).double())
         loss = loss_function(y_pred, torch.from_numpy(dataset['y_train']).unsqueeze(1).double())
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        training_losses.append(loss.item())
+    optimizer.zero_grad()
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Learning Curve')
+    plt.plot(training_losses)
+    plt.show()
+
+
 
     y_pred_train = model(torch.from_numpy(dataset['x_train']).double())
     confusion_train = binary_confusion_matrix(torch.squeeze(y_pred_train), torch.from_numpy(dataset['y_train']))
@@ -40,6 +51,7 @@ def model_first(dataset):
 
     model.eval()
     y_pred = model(torch.from_numpy(dataset['x_test']))
+
     model.train()
 
     confusion_test = binary_confusion_matrix(torch.squeeze(y_pred), torch.from_numpy(dataset['y_test']))
